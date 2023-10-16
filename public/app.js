@@ -15,33 +15,77 @@
     return d.toLocaleTimeString()
   }
 
+  const isValidToken = () => {
+    const expirationDate = localStorage.getItem("creation_date") || null;
+    if (!expirationDate) {
+      return true;
+    }
+    return expirationDate < new Date();
+  }
+
   const updateOAuthInfo = (access_token, refresh_token, expires_in) => {
     return `<h2>oAuth info</h2>
-      <dl class="dl-horizontal">
-        <dt>Access token</dt><dd class="text-overflow">${access_token}</dd>
-        <dt>Refresh token</dt><dd class="text-overflow">${refresh_token}</dd>
-        <dt>Expiration at</dt><dd class="text-overflow">${getExpirationDate(expires_in)}</dd>
-      </dl>`;
+      <table>
+        <tr>
+          <td>Access token</td>
+          <td>${access_token}</td>
+        </tr>
+        <tr>
+          <td>Refresh token</td>
+          <td>${refresh_token}</td>
+        </tr>
+        <tr>
+          <td>Expiration at</td>
+          <td>${getExpirationDate(expires_in)}</td>
+        </tr>
+      </table>`
   }
 
   const updateUserData = (data) => {
     return `<h1>Logged in as ${data.display_name}</h1>
-      <div class="media">
-        <div class="pull-left">
-          <img class="media-object" width="150" src="${data.images[0].url}" />
+      <div>
+        <div>
+          <img width="150" src="${data.images[0].url}" />
         </div>
-        <div class="media-body">
-          <dl class="dl-horizontal">
-            <dt>Display name</dt><dd class="clearfix">${data.display_name}</dd>
-            <dt>Id</dt><dd>${data.id}</dd>
-            <dt>Email</dt><dd>${data.email}</dd>
-            <dt>Spotify URI</dt><dd><a href="${data.external_urls.spotify}">${data.external_urls.spotify}</a></dd>
-            <dt>Link</dt><dd><a href="${data.href}">${data.href}</a></dd>
-            <dt>Profile Image</dt><dd class="clearfix"><a href="${data.images[0].url}">${data.images[0].url}}</a></dd>
-            <dt>Country</dt><dd>${data.country}</dd>
-          </dl>
+        <div>
+          <table>
+            <tr>
+              <td>Display name</td>
+              <td>${data.display_name}</td>
+            </tr>
+            <tr>
+              <td>Id</td>
+              <td>${data.id}</td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td>${data.email}</td>
+            </tr>
+            <tr>
+              <td>Spotify URI</td>
+              <td>
+                <a href="${data.external_urls.spotify}">${data.external_urls.spotify}</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Link </dt>
+              <td>
+                <a href="${data.href}">${data.href}</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Profile Image</td>
+              <td>
+                <a href="${data.images[0].url}">${data.images[0].url}}</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Country</td>
+              <td>${data.country}</td>
+            </tr>
+          </table>
         </div>
-      </div>`;
+      </div>`
   }
 
   /* oAuth2 PKCE helpers */
@@ -103,6 +147,7 @@
 
     localStorage.setItem('access_token', access_token);
     localStorage.setItem('refresh_token', refresh_token);
+    localStorage.setItem('creation_date', new Date());
     localStorage.setItem('expires_in', expires_in);
   }
 
@@ -181,10 +226,7 @@
   const code = args.get('code');
 
   if (code) {
-    loginSection.style.display = 'none';
-    dataSection.style.display = 'unset';
-
-    if (!access_token) {
+    if (!access_token || !isValidToken()) {
       await getToken(code);
     }
 
@@ -193,6 +235,9 @@
 
     // request user info and update UI
     getUserData();
+
+    loginSection.style.display = 'none';
+    dataSection.style.display = 'unset';
   }
 })();
 

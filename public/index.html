@@ -2,35 +2,22 @@
 <html>
   <head>
     <title>Example of the Authorization Code with PKCE flow with Spotify</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
-
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
   </head>
 
   <body>
 
-    <div class="container">
+    <div>
       <div id="login">
         <h1>Welcome to the OAuth2 PKCE Example</h1>
         <button id="login-button"> Log in with Spotify </button>
       </div>
 
       <div id="loggedin">
-        <div id="user-profile">
+        <div id="user-profile"></div>
+        <div id="oauth"></div>
+        <div>
+          <button id="logout-button">Log out</button>
         </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="logout-button">Log out</button>
       </div>
     </div>
 

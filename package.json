@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Spotify Authorization Code with PKCE flow example",
   "scripts": {
-    "start": "http-server public"
+    "start": "http-server --cors public"
   },
   "author": "",
   "license": "ISC",
