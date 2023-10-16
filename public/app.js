@@ -139,8 +139,29 @@
       }),
     }
 
-    const response = await doAPIcall(tokenEndpoint, payload)
+    const response = await doAPIcall(tokenEndpoint, payload);
+    updateToken(response);
+  }
 
+  const refreshToken = async () => {
+    const refresh_token = localStorage.getItem('refresh_token');
+
+    const payload = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id,
+        grant_type: 'refresh_token',
+        refresh_token: refresh_token
+      }),
+    }
+    const response = await doAPIcall(tokenEndpoint, payload);
+    updateToken(response);
+  }
+
+  const updateToken = (response) => {
     access_token = response.access_token;
     refresh_token = response.refresh_token;
     expires_in = response.expires_in;
@@ -149,7 +170,11 @@
     localStorage.setItem('refresh_token', refresh_token);
     localStorage.setItem('creation_date', new Date());
     localStorage.setItem('expires_in', expires_in);
+
+    // update oauth UI
+    document.getElementById('oauth').innerHTML = updateOAuthInfo(access_token, refresh_token, expires_in);
   }
+
 
   /* request a new authorization code */
   const generateCode = async() => {
@@ -206,6 +231,10 @@
     logout();
   });
 
+  document.getElementById('refresh-token-button').addEventListener('click', () => {
+    refreshToken();
+  });
+
   // app configuration
   const client_id = ''; // your clientID
   const redirect_uri = ''; // your redirect URI
@@ -229,9 +258,6 @@
     if (!access_token || !isValidToken()) {
       await getToken(code);
     }
-
-    // update oauth UI
-    document.getElementById('oauth').innerHTML = updateOAuthInfo(access_token, refresh_token, expires_in);
 
     // request user info and update UI
     getUserData();
