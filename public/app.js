@@ -24,76 +24,72 @@
   }
 
   const updateOAuthInfo = (access_token, refresh_token, expires_in) => {
-    return `<h2>oAuth info</h2>
-      <table>
-        <tr>
-          <td>Access token</td>
-          <td>${access_token}</td>
-        </tr>
-        <tr>
-          <td>Refresh token</td>
-          <td>${refresh_token}</td>
-        </tr>
-        <tr>
-          <td>Expiration at</td>
-          <td>${getExpirationDate(expires_in)}</td>
-        </tr>
-      </table>`
+    return `
+    <h2>oAuth info</h2>
+    <table>
+      <tr>
+        <td>Access token</td>
+        <td>${access_token}</td>
+      </tr>
+      <tr>
+        <td>Refresh token</td>
+        <td>${refresh_token}</td>
+      </tr>
+      <tr>
+        <td>Expiration at</td>
+        <td>${getExpirationDate(expires_in)}</td>
+      </tr>
+    </table>`
   }
 
   const updateUserData = (data) => {
-    return `<h1>Logged in as ${data.display_name}</h1>
-      <div>
-        <div>
-          <img width="150" src="${data.images[0].url}" />
-        </div>
-        <div>
-          <table>
-            <tr>
-              <td>Display name</td>
-              <td>${data.display_name}</td>
-            </tr>
-            <tr>
-              <td>Id</td>
-              <td>${data.id}</td>
-            </tr>
-            <tr>
-              <td>Email</td>
-              <td>${data.email}</td>
-            </tr>
-            <tr>
-              <td>Spotify URI</td>
-              <td>
-                <a href="${data.external_urls.spotify}">${data.external_urls.spotify}</a>
-              </td>
-            </tr>
-            <tr>
-              <td>Link </dt>
-              <td>
-                <a href="${data.href}">${data.href}</a>
-              </td>
-            </tr>
-            <tr>
-              <td>Profile Image</td>
-              <td>
-                <a href="${data.images[0].url}">${data.images[0].url}}</a>
-              </td>
-            </tr>
-            <tr>
-              <td>Country</td>
-              <td>${data.country}</td>
-            </tr>
-          </table>
-        </div>
-      </div>`
+    return `
+    <h1>Logged in as ${data.display_name}</h1>
+    <img width="150" src="${data.images[0].url}" alt="${data.display_name}" />
+    <table>
+      <tr>
+        <td>Display name</td>
+        <td>${data.display_name}</td>
+      </tr>
+      <tr>
+        <td>Id</td>
+        <td>${data.id}</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>${data.email}</td>
+      </tr>
+      <tr>
+        <td>Spotify URI</td>
+        <td>
+          <a href="${data.external_urls.spotify}">${data.external_urls.spotify}</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Link </dt>
+        <td>
+          <a href="${data.href}">${data.href}</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Profile Image</td>
+        <td>
+          <a href="${data.images[0].url}">${data.images[0].url}}</a>
+        </td>
+      </tr>
+      <tr>
+        <td>Country</td>
+        <td>${data.country}</td>
+      </tr>
+    </table>`
   }
 
   /* oAuth2 PKCE helpers */
-  const generateRandomString = (length) => {
-    var array = new Uint32Array(length);
-    array = window.crypto.getRandomValues(array);
-    return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
-  }
+  function generateRandomString() {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const values = crypto.getRandomValues(new Uint8Array(64));
+    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+``}
 
   const sha256 = async (plain) => {
     const encoder = new TextEncoder()
@@ -178,7 +174,7 @@
 
   /* request a new authorization code */
   const generateCode = async() => {
-    const code_verifier  = generateRandomString(32);
+    const code_verifier  = generateRandomString();
     const hashed = await sha256(code_verifier)
     const code_challenge = base64URLEncode(hashed);
 
@@ -236,8 +232,8 @@
   });
 
   // app configuration
-  const client_id = ''; // your clientID
-  const redirect_uri = ''; // your redirect URI
+  const client_id = 'd5e742ff0a6a4b5983bcb9eb3e60aa37'; // your clientID
+  const redirect_uri = 'http://localhost:8080/'; // your redirect URI
 
   // OAuth2 configuration
   const hostname = "https://accounts.spotify.com";

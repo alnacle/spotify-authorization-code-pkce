@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Example of the Authorization Code with PKCE flow with Spotify</title>
-  </head>
 
-  <body>
+<head>
+  <title>Example of the Authorization Code with PKCE flow with Spotify</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    <div>
-      <div id="login">
-        <h1>Welcome to the OAuth2 PKCE Example</h1>
-        <button id="login-button"> Log in with Spotify </button>
-      </div>
+<body>
 
-      <div id="loggedin">
-        <div id="user-profile"></div>
-        <div id="oauth"></div>
-        <div>
-          <button id="refresh-token-button">Refresh Token</button>
-          <button id="logout-button">Log out</button>
-        </div>
-      </div>
+  <div>
+    <div id="login">
+      <h1>Welcome to the OAuth2 PKCE Example</h1>
+      <button id="login-button"> Log in with Spotify </button>
     </div>
 
-    <script src="app.js"></script>
+    <div id="loggedin">
+      <div id="user-profile"></div>
+      <div id="oauth"></div>
+      <button id="refresh-token-button">Refresh Token</button>
+      <button id="logout-button">Log out</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
+
 </html>
