@@ -89,7 +89,7 @@
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const values = crypto.getRandomValues(new Uint8Array(64));
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
-``}
+  }
 
   const sha256 = async (plain) => {
     const encoder = new TextEncoder()
@@ -114,12 +114,12 @@
   /* clean up environment */
   const logout = () => {
     localStorage.clear();
-    window.location.href = redirect_uri;
+    window.location.href = redirectUri;
   }
 
   /* return token from a given authorize code */
   const getToken = async code => {
-    const code_verifier = localStorage.getItem('code_verifier');
+    const codeVerifier = localStorage.getItem('code_verifier');
 
     const payload = {
       method: 'POST',
@@ -127,11 +127,11 @@
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id,
+        client_id: clientId,
         grant_type: 'authorization_code',
         code,
-        redirect_uri,
-        code_verifier,
+        redirect_uri: redirectUri,
+        code_verifier: codeVerifier,
       }),
     }
 
@@ -139,8 +139,8 @@
     updateToken(response);
   }
 
-  const refreshToken = async () => {
-    const refresh_token = localStorage.getItem('refresh_token');
+  const getRefreshToken = async () => {
+    const refreshToken = localStorage.getItem('refresh_token');
 
     const payload = {
       method: 'POST',
@@ -148,9 +148,9 @@
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: new URLSearchParams({
-        client_id,
+        client_id: clientId,
         grant_type: 'refresh_token',
-        refresh_token: refresh_token
+        refresh_token: refreshToken
       }),
     }
     const response = await doAPIcall(tokenEndpoint, payload);
@@ -158,36 +158,36 @@
   }
 
   const updateToken = (response) => {
-    access_token = response.access_token;
-    refresh_token = response.refresh_token;
-    expires_in = response.expires_in;
+    accessToken = response.access_token;
+    refreshToken = response.refresh_token;
+    expiresIn = response.expires_in;
 
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('refresh_token', refresh_token);
+    localStorage.setItem('access_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
     localStorage.setItem('creation_date', new Date());
-    localStorage.setItem('expires_in', expires_in);
+    localStorage.setItem('expires_in', expiresIn);
 
     // update oauth UI
-    document.getElementById('oauth').innerHTML = updateOAuthInfo(access_token, refresh_token, expires_in);
+    document.getElementById('oauth').innerHTML = updateOAuthInfo(accessToken, refreshToken, expiresIn);
   }
 
 
   /* request a new authorization code */
   const generateCode = async() => {
-    const code_verifier  = generateRandomString();
-    const hashed = await sha256(code_verifier)
-    const code_challenge = base64URLEncode(hashed);
+    const codeVerifier  = generateRandomString();
+    const hashed = await sha256(codeVerifier)
+    const codeChallenge = base64URLEncode(hashed);
 
-    window.localStorage.setItem('code_verifier', code_verifier);
+    window.localStorage.setItem('code_verifier', codeVerifier);
 
     const authUrl = new URL(authorizationEndpoint)
     const params =  {
       response_type: 'code',
-      client_id,
+      client_id: clientId,
       scope,
-      code_challenge_method,
-      code_challenge,
-      redirect_uri,
+      code_challenge_method: codeChallengeMethod,
+      code_challenge: codeChallenge,
+      redirect_uri: redirectUri,
     }
 
     authUrl.search = new URLSearchParams(params).toString();
@@ -198,11 +198,11 @@
 
   /* API call to /me endpoint */
   const getUserData = async () => {
-    let access_token = localStorage.getItem('access_token');
+    let accessToken = localStorage.getItem('access_token');
     const payload = {
       method: 'GET',
       headers: {
-        'Authorization': 'Bearer ' + access_token,
+        'Authorization': 'Bearer ' + accessToken,
       },
     }
     response = await doAPIcall('https://api.spotify.com/v1/me', payload)
@@ -228,30 +228,30 @@
   });
 
   document.getElementById('refresh-token-button').addEventListener('click', () => {
-    refreshToken();
+    getRefreshToken();
   });
 
   // app configuration
-  const client_id = 'yourclientid'; // your clientID
-  const redirect_uri = 'your://redirect.uri'; // your redirect URI
+  const clientId = 'yourclientid'; // your clientID
+  const redirectUri = 'http://your-redirect-uri'; // your redirect URI
 
   // OAuth2 configuration
   const hostname = "https://accounts.spotify.com";
   const authorizationEndpoint = `${hostname}/authorize`;
   const tokenEndpoint = `${hostname}/api/token`;
   const scope = 'user-read-private user-read-email';
-  const code_challenge_method = 'S256';
+  const codeChallengeMethod = 'S256';
 
-  let access_token = localStorage.getItem('access_token') || null;
-  let refresh_token = localStorage.getItem('refresh_token') || null;
-  let expires_in = localStorage.getItem('refresh_in') || null;
+  let accessToken = localStorage.getItem('access_token') || null;
+  let refreshToken = localStorage.getItem('refresh_token') || null;
+  let expiresIn = localStorage.getItem('refresh_in') || null;
 
   // Try to fetch auth code from current browser search URL
   const args = new URLSearchParams(window.location.search);
   const code = args.get('code');
 
   if (code) {
-    if (!access_token || !isValidToken()) {
+    if (!accessToken || !isValidToken()) {
       await getToken(code);
     }
 
