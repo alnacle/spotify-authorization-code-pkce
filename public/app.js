@@ -232,8 +232,8 @@
   });
 
   // app configuration
-  const client_id = 'd5e742ff0a6a4b5983bcb9eb3e60aa37'; // your clientID
-  const redirect_uri = 'http://localhost:8080/'; // your redirect URI
+  const client_id = 'yourclientid'; // your clientID
+  const redirect_uri = 'your://redirect.uri'; // your redirect URI
 
   // OAuth2 configuration
   const hostname = "https://accounts.spotify.com";
